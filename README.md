@@ -1,5 +1,5 @@
-# DeM Environments
-DeM is the dementia education module.
+# DCW Environments
+Dementia Care Works is a dementia education module, aka DEM.
 Assessments are entered by providers and consist of six screening tools assessing
 and occasionally scoring different domains:
 - Cognition
