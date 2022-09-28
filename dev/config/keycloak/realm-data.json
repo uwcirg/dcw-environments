@@ -2293,6 +2293,15 @@
     "roles": {
       "realm": [
         {
+          "id": "e5bbcde7-9460-408b-8238-16c27bd68c27",
+          "name": "clinician",
+          "description": "clinician",
+          "composite": false,
+          "clientRole": false,
+          "containerId": "femr",
+          "attributes": {}
+        },
+        {
           "id": "0b711c91-58d4-45bb-ae92-3522bf65520f",
           "name": "uma_authorization",
           "description": "${role_uma_authorization}",
