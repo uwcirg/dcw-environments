@@ -188,6 +188,8 @@ services:
     image: ghcr.io/uwcirg/asbi-screening-app:${SCREENER_IMAGE_TAG:-latest}
     env_file:
       - screener.env
+    environment:
+      VUE_APP_DASHBOARD_URL: 'https://femr.${BASE_DOMAIN:-localtest.me}'
     depends_on:
       - fhir
     labels:
