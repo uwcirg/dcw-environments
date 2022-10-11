@@ -2662,7 +2662,7 @@
         ],
         "disableableCredentialTypes": [],
         "requiredActions": [],
-        "realmRoles": ["uma_authorization", "offline_access"],
+        "realmRoles": ["uma_authorization", "offline_access", "clinician"],
         "clientRoles": {
           "account": ["manage-account", "view-profile"]
         },
