@@ -12,8 +12,3 @@ services:
     networks:
       - ingress
 
-networks:
-  # ingress network
-  ingress:
-    external: true
-    name: external_web
