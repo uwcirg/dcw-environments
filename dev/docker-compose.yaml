@@ -193,7 +193,7 @@ services:
 
       # TODO remove when FHIR resources are PUT after SoF launch
       # FHIR REST endpoint used by upload.py to upload static FHIR resources
-      FHIR_SERVER: 'https://fhir.${BASE_DOMAIN:-localtest.me}'
+      FHIR_SERVER: https://fhir.${BASE_DOMAIN:-localtest.me}/fhir
     depends_on:
       - fhir
     labels:
