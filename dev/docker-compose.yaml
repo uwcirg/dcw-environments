@@ -32,7 +32,7 @@ services:
       MAP_API: "http://fhir-internal:8080/fhir/"
       # FHIR URL passed to SoF client
       SOF_HOST_FHIR_URL: 'https://fhirwall.${BASE_DOMAIN:-localtest.me}/fhir'
-      SOF_CLIENTS: '[{"id":"SCREENER", "label":"Launch", "launch_url":"https://screener.${BASE_DOMAIN:-localtest.me}/launch.html", "required_roles": ["clinician"]}]'
+      SOF_CLIENTS: '[{"id":"SCREENER", "label":"Launch", "launch_url":"https://screener.${BASE_DOMAIN:-localtest.me}/launch.html", "required_roles": ["clinician"]}, {"id":"SUMMARY", "label":"Summary", "launch_url":"https://summary.${BASE_DOMAIN:-localtest.me}/launch.html", "required_roles": ["clinician"]}]'
       LOGSERVER_URL: "https://logs.${BASE_DOMAIN:-localtest.me}"
       REDIS_URL: redis://redis:6379/1
     depends_on:
@@ -189,6 +189,7 @@ services:
     env_file:
       - screener.env
     environment:
+      VUE_APP_PROJECT_ID: 'DCW'
       VUE_APP_DASHBOARD_URL: 'https://femr.${BASE_DOMAIN:-localtest.me}'
 
       # TODO remove when FHIR resources are PUT after SoF launch
@@ -205,6 +206,24 @@ services:
     networks:
       - ingress
 
+  summary:
+    image: ghcr.io/uwcirg/patient-summary:${SUMMARY_IMAGE_TAG:-latest}
+    environment:
+      REACT_APP_CLIENT_ID: 'summary_openid_client'
+      REACT_APP_DASHBOARD_URL: 'https://femr.${BASE_DOMAIN:-localtest.me}'
+      REACT_APP_PROJECT_ID: 'DCW'
+      REACT_APP_QUESTIONNAIRES: 'minicog,gad7,phq9'
+      REACT_APP_DASHBOARD_URL: 'https://femr.${BASE_DOMAIN:-localtest.me}'
+    depends_on:
+      - fhir
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.summary-${COMPOSE_PROJECT_NAME}.rule=Host(`summary.${BASE_DOMAIN:-localtest.me}`)"
+      - "traefik.http.routers.summary-${COMPOSE_PROJECT_NAME}.entrypoints=websecure"
+      - "traefik.http.routers.summary-${COMPOSE_PROJECT_NAME}.tls=true"
+      - "traefik.http.routers.summary-${COMPOSE_PROJECT_NAME}.tls.certresolver=letsencrypt"
+    networks:
+      - ingress
 
 volumes:
   db-data: {}
