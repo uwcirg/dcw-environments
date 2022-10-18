@@ -214,7 +214,6 @@ services:
       REACT_APP_DASHBOARD_URL: 'https://femr.${BASE_DOMAIN:-localtest.me}'
       REACT_APP_PROJECT_ID: 'DCW'
       REACT_APP_QUESTIONNAIRES: 'minicog,gad7,phq9'
-      REACT_APP_DASHBOARD_URL: 'https://femr.${BASE_DOMAIN:-localtest.me}'
     depends_on:
       - fhir
     labels:
