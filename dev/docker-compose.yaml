@@ -218,6 +218,10 @@ services:
       - "traefik.http.routers.screener-${COMPOSE_PROJECT_NAME}.tls.certresolver=letsencrypt"
     networks:
       - ingress
+    depends_on:
+      fhir:
+        condition: service_healthy
+
 
   summary:
     image: ghcr.io/uwcirg/patient-summary:${SUMMARY_IMAGE_TAG:-latest}
