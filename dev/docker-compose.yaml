@@ -65,6 +65,7 @@ services:
       # make URLs relative to fEMR for pagination
       # TODO remove when fEMR can rewrite URLs
       hapi.fhir.server_address: 'https://femr.${BASE_DOMAIN:-localtest.me}/fhir/'
+      hapi.fhir.tester.home.server_address: 'https://fhir.${BASE_DOMAIN:-localtest.me}/fhir/'
     volumes:
       - "./config/hapi/application.yaml:/opt/application.yaml:ro"
     depends_on:
