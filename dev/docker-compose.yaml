@@ -67,12 +67,23 @@ services:
       hapi.fhir.server_address: 'https://femr.${BASE_DOMAIN:-localtest.me}/fhir/'
     volumes:
       - "./config/hapi/application.yaml:/opt/application.yaml:ro"
+
+      # docker image does not contain any appropriate HTTP client
+      # use busybox from host as `wget`
+      - /usr/bin/busybox:/usr/bin/wget:ro
+
     depends_on:
       - db
     networks:
       internal:
         aliases:
           - fhir-internal
+
+    healthcheck:
+      test:
+        wget --spider --quiet
+          http://localhost:8080/fhir/metadata
+      start_period: 2m
 
 
   fhirwall:
