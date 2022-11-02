@@ -53,14 +53,14 @@ services:
 
 
   fhir:
-    image: ${FHIR_IMAGE_NAME:-hapiproject/hapi}:${FHIR_IMAGE_TAG:-v5.5.1}
+    image: ${FHIR_IMAGE_NAME:-alphora/cqf-ruler}:${FHIR_IMAGE_TAG:-0.7.1}
     environment:
       SPRING_CONFIG_LOCATION: file:///opt/application.yaml
       spring.datasource.url: jdbc:postgresql://db:5432/hapifhir
       spring.datasource.username: postgres
       spring.datasource.password: postgres
       spring.datasource.driverClassName: org.postgresql.Driver
-      spring.jpa.hibernate.dialect: org.hibernate.dialect.PostgreSQL94Dialect
+      spring.jpa.properties.hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgres94Dialect
 
       # make URLs relative to fEMR for pagination
       # TODO remove when fEMR can rewrite URLs
