@@ -1,6 +1,38 @@
 ---
 version: "3.7"
 services:
+  confidentialbackend:
+    # TODO replace with confidential-client fork when need arises
+    image: ghcr.io/uwcirg/helloworld-confidential-client-sof:${CONFIDENTIALBACKEND_IMAGE_TAG:-latest}
+    env_file:
+      confidentialbackend.env
+    environment:
+      REQUEST_CACHE_URL: redis://redis:6379/1
+      SESSION_REDIS: redis://redis:6379/0
+
+      # client ID regisered with SoF host (Keycloak)
+      SOF_CLIENT_ID: confidentialbackend_openid_client
+      PREFERRED_URL_SCHEME: https
+      # ultimate destination after SoF launch and backend auth
+      LAUNCH_DEST: 'https://screener.${BASE_DOMAIN:-localtest.me}/launch.html'
+
+      # do not pass launch/patient as Epic will infer standalone launch
+      SOF_CLIENT_SCOPES: "patient/*.read launch openid profile roles"
+      SOF_ACCESS_TOKEN_URL: 'https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/token'
+      SOF_AUTHORIZE_URL: 'https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/auth'
+      LOGSERVER_URL: "https://logs.${BASE_DOMAIN:-localtest.me}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.confidentialbackend-${COMPOSE_PROJECT_NAME}.rule=Host(`confidentialbackend.${BASE_DOMAIN:-localtest.me}`)"
+      - "traefik.http.routers.confidentialbackend-${COMPOSE_PROJECT_NAME}.entrypoints=websecure"
+      - "traefik.http.routers.confidentialbackend-${COMPOSE_PROJECT_NAME}.tls=true"
+      - "traefik.http.routers.confidentialbackend-${COMPOSE_PROJECT_NAME}.tls.certresolver=letsencrypt"
+    networks:
+      - ingress
+      - internal
+    depends_on:
+      - redis
+
   db:
     image: postgres:${POSTGRES_IMAGE_TAG:-12}
     environment:
@@ -32,7 +64,7 @@ services:
       MAP_API: "http://fhir-internal:8080/fhir/"
       # FHIR URL passed to SoF client
       SOF_HOST_FHIR_URL: 'https://fhirwall.${BASE_DOMAIN:-localtest.me}/fhir'
-      SOF_CLIENTS: '[{"id":"SCREENER", "label":"New Assessment", "launch_url":"https://screener.${BASE_DOMAIN:-localtest.me}/launch.html", "required_roles": ["clinician"]}, {"id":"SUMMARY", "label":"View Report", "launch_url":"https://summary.${BASE_DOMAIN:-localtest.me}/launch.html", "required_roles": ["clinician"]}]'
+      SOF_CLIENTS: '[{"id":"SCREENER", "label":"New Assessment", "launch_url":"https://confidentialbackend.${BASE_DOMAIN:-localtest.me}/auth/launch", "required_roles": ["clinician"]}, {"id":"SUMMARY", "label":"View Report", "launch_url":"https://summary.${BASE_DOMAIN:-localtest.me}/launch.html", "required_roles": ["clinician"]}]'
       LOGSERVER_URL: "https://logs.${BASE_DOMAIN:-localtest.me}"
       REDIS_URL: redis://redis:6379/1
     depends_on:
@@ -40,6 +72,7 @@ services:
       - keycloak
       - logs
       - redis
+      - confidentialbackend
       - screener
     labels:
       - "traefik.enable=true"
@@ -192,6 +225,7 @@ services:
     environment:
       VUE_APP_PROJECT_ID: 'DCW'
       VUE_APP_DASHBOARD_URL: 'https://femr.${BASE_DOMAIN:-localtest.me}'
+      VUE_APP_CONF_API_URL: 'https://confidentialbackend.${BASE_DOMAIN:-localtest.me}'
       VUE_APP_WRITE_BACK_MODE: 'smart'
 
       # TODO remove when FHIR resources are PUT after SoF launch
