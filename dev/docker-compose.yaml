@@ -112,6 +112,7 @@ services:
     env_file:
       fhirwall.env
     environment:
+      LOGSERVER_URL: "https://logs.${BASE_DOMAIN:-localtest.me}"
       OIDC_AUTHORIZE_URL: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/auth"
       OIDC_TOKEN_URI: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/token"
       OIDC_TOKEN_INTROSPECTION_URI: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/token/introspect"
@@ -134,6 +135,7 @@ services:
       - "traefik.http.routers.fhirwall-${COMPOSE_PROJECT_NAME}.tls.certresolver=letsencrypt"
     depends_on:
       - fhir
+      - logs
     networks:
       - ingress
       - internal
