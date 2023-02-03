@@ -60,8 +60,7 @@ services:
       OIDC_TOKEN_URI: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/token"
       OIDC_TOKEN_INTROSPECTION_URI: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/token/introspect"
       # TODO change to INTERNAL_FHIR_API
-      # TODO switch to external API (requiring auth)
-      MAP_API: "http://fhir-internal:8080/fhir/"
+      MAP_API: 'https://fhirwall.${BASE_DOMAIN:-localtest.me}/fhir/'
       # FHIR URL passed to SoF client
       SOF_HOST_FHIR_URL: 'https://fhirwall.${BASE_DOMAIN:-localtest.me}/fhir'
       SOF_CLIENTS: '[{"id":"SCREENER", "label":"New Assessment", "launch_url":"https://confidentialbackend.${BASE_DOMAIN:-localtest.me}/auth/launch", "required_roles": ["clinician"]}, {"id":"SUMMARY", "label":"View Report", "launch_url":"https://summary.${BASE_DOMAIN:-localtest.me}/launch.html", "required_roles": ["clinician"]}]'
@@ -113,6 +112,7 @@ services:
     env_file:
       fhirwall.env
     environment:
+      LOGSERVER_URL: "https://logs.${BASE_DOMAIN:-localtest.me}"
       OIDC_AUTHORIZE_URL: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/auth"
       OIDC_TOKEN_URI: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/token"
       OIDC_TOKEN_INTROSPECTION_URI: "https://keycloak.${BASE_DOMAIN:-localtest.me}/auth/realms/fEMR/protocol/openid-connect/token/introspect"
@@ -135,6 +135,7 @@ services:
       - "traefik.http.routers.fhirwall-${COMPOSE_PROJECT_NAME}.tls.certresolver=letsencrypt"
     depends_on:
       - fhir
+      - logs
     networks:
       - ingress
       - internal
